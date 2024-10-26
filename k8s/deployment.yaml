@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dummy-function-sleep
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: dummy-function-sleep
+  template:
+    metadata:
+      labels:
+        app: dummy-function-sleep
+    spec:
+      serviceAccountName: lenneflow-sa
+      hostNetwork: true
+      containers:
+        - name: admin
+          image: lenneflow/dummy-function-sleep
+          ports:
+            - containerPort: 8080
+              hostPort: 8080
+          env:
+            - name: SPRING_CLOUD_BOOTSTRAP_ENABLED
+              value: "true"

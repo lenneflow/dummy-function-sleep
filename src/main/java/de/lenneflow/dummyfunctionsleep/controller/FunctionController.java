@@ -44,7 +44,9 @@ public class FunctionController {
             output.put("sleepTimeInMillis" , sleepTimeInMillis);
             output.put("sleepTimeInSeconds", sleepTime);
             functionPayload.setOutputData(output);
+            logger.info("call the callback url " + callBackUrl);
             restTemplate.postForObject(callBackUrl, functionPayload, Void.class);
+            logger.info("Payload sent successfully");
         }catch (Exception e){
             logger.error(e.getMessage());
             functionPayload.setRunStatus(RunStatus.FAILED);

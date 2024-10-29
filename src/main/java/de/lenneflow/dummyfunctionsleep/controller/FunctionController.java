@@ -28,30 +28,34 @@ public class FunctionController {
         this.restTemplate = restTemplate;
     }
 
+
     @PostMapping("/sleep")
     @Async
     public void sleep(@RequestBody FunctionPayload functionPayload){
+
         String callBackUrl = functionPayload.getCallBackUrl();
         try {
-            String keySleepTime = "sleepTimeInSeconds";
-            int sleepTime = (int) functionPayload.getInputData().get(keySleepTime);
-            logger.info("Sleeping for " + sleepTime + " seconds");
+            String key = "sleepTimeInSeconds";
+            int sleepTime = (int) functionPayload.getInputData().get(key);
+            logger.info("Sleeping for {} seconds", sleepTime);
             int sleepTimeInMillis = sleepTime * 1000;
             Thread.sleep(sleepTimeInMillis);
-            logger.info("finished sleeping for " + sleepTime + " seconds");
+            logger.info("finished sleeping for {} seconds", sleepTime);
             functionPayload.setRunStatus(RunStatus.COMPLETED);
             Map<String, Object> output = new HashMap<>();
             output.put("sleepTimeInMillis" , sleepTimeInMillis);
             output.put("sleepTimeInSeconds", sleepTime);
             functionPayload.setOutputData(output);
-            logger.info("call the callback url " + callBackUrl);
+            logger.info("call the callback url {}", callBackUrl);
             restTemplate.postForObject(callBackUrl, functionPayload, Void.class);
             logger.info("Payload sent successfully");
         }catch (Exception e){
             logger.error(e.getMessage());
             functionPayload.setRunStatus(RunStatus.FAILED);
-            functionPayload.setFailureReason(e.getLocalizedMessage());
+            functionPayload.setFailureReason(e.getMessage());
             restTemplate.postForObject(callBackUrl, functionPayload, Void.class);
+            Thread.currentThread().interrupt();
+
         }
     }
 }

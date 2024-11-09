@@ -35,16 +35,15 @@ public class FunctionController {
 
         String callBackUrl = functionPayload.getCallBackUrl();
         try {
-            String key = "sleepTimeInSeconds";
+            String key = "sleepTimeInMillis";
             int sleepTime = (int) functionPayload.getInputData().get(key);
             logger.info("Sleeping for {} seconds", sleepTime);
-            int sleepTimeInMillis = sleepTime * 1000;
-            Thread.sleep(sleepTimeInMillis);
+            Thread.sleep(sleepTime);
             logger.info("finished sleeping for {} seconds", sleepTime);
             functionPayload.setRunStatus(RunStatus.COMPLETED);
             Map<String, Object> output = new HashMap<>();
-            output.put("sleepTimeInMillis" , sleepTimeInMillis);
-            output.put("sleepTimeInSeconds", sleepTime);
+            output.put("sleepTimeInMillis" , sleepTime);
+            output.put("sleepTimeInSeconds", sleepTime / 1000);
             functionPayload.setOutputData(output);
             logger.info("call the callback url {}", callBackUrl);
             restTemplate.postForObject(callBackUrl, functionPayload, Void.class);

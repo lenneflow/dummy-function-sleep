@@ -6,7 +6,7 @@ Input payload example
 {
     "callBackUrl" : "http://localhost:8100/api/qms/callback/1/1/1",
     "inputData": {
-        "sleepTimeInSeconds": 5
+        "sleepTimeInMillis": 5
         }
 }
 ```
